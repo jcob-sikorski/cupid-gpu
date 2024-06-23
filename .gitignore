@@ -1,0 +1,17 @@
+/webui/stable-diffusion-webui
+
+/deepfake/roop
+/deepfake/worker/node_modules
+/deepfake/worker/src/.ipynb_checkpoints
+
+/bark/.ipynb_checkpoints
+/bark/bin
+/bark/include
+/bark/lib
+/bark/lib64
+/bark/share
+/bark/static
+
+7zip
+aws
+awscliv2.zip
