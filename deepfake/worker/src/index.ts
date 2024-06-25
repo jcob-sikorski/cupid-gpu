@@ -1,6 +1,10 @@
+// Import the startWorker function from the worker module.
 import { startWorker } from "./worker";
+
+// Import the Zod library for schema validation.
 import { z } from "zod";
 
+// Define the schema for environment variables using Zod.
 const envVariables = z.object({
   REDIS_URL: z.string(),
   WORKER_DB: z.string(),
@@ -11,13 +15,19 @@ const envVariables = z.object({
   MINIO_SECRET_KEY: z.string(),
 });
 
+// Extend the NodeJS.ProcessEnv interface to include the validated environment variables.
 declare global {
   namespace NodeJS {
+    // The ProcessEnv interface now includes the types inferred from the envVariables schema.
     interface ProcessEnv extends z.infer<typeof envVariables> {}
   }
 }
 
+// Parse and validate the process environment variables against the defined schema.
 const env = envVariables.parse(process.env);
+
+// Log the validated environment variables to the console.
 console.log(env);
 
+// Start the worker using the imported startWorker function.
 startWorker();
