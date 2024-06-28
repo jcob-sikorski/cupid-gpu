@@ -8,10 +8,10 @@ import { spawn } from "child_process";
 // Define the directory where temporary files will be stored, resolving the path to the current directory.
 const TEMP_DIR = resolve("./temp/");
 // Define the current working directory for the process, resolving the path to the parent directory.
-const cwd = resolve("../roop");
+const cwd = resolve("../roop-unleashed");
 
 // Define the virtual environment command line arguments.
-const venv = ["--venv", "/workspace/deepfake/roop"];
+const venv = ["--venv", "/workspace/deepfake/roop-unleashed"];
 
 // Define the arguments to be passed to the deepfake processing command.
 const args = [
