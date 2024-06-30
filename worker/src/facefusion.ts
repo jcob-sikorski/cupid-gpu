@@ -6,7 +6,7 @@ import sharp from 'sharp';
 // Define the directory where temporary files will be stored, resolving the path to the current directory.
 const TEMP_DIR = resolve("./temp/");
 // Define the current working directory for the process, resolving the path to the parent directory.
-const cwd = resolve("../../facefusion");
+const cwd = resolve("../facefusion");
 
 // Define the virtual environment command line arguments.
 const venv = ["--venv", "/workspace/facefusion"];
