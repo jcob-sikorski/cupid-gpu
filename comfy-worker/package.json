@@ -1,0 +1,36 @@
+{
+  "name": "worker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "env-cmd ts-node src"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/uuid": "^10.0.0",
+    "@types/ws": "^8.5.10",
+    "axios": "^1.7.2",
+    "bullmq": "^4.7.4",
+    "env-cmd": "^10.1.0",
+    "fastify": "^4.28.1",
+    "fluent-ffmpeg": "^2.1.2",
+    "fs-extra": "^11.1.1",
+    "ioredis": "^5.3.2",
+    "mime-types": "^2.1.35",
+    "minio": "^7.1.1",
+    "node-fetch": "^3.3.2",
+    "sharp": "^0.33.4",
+    "ts-node": "^10.9.1",
+    "uuid": "^10.0.0",
+    "ws": "^8.18.0",
+    "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.21",
+    "@types/fs-extra": "^11.0.1",
+    "@types/mime-types": "^2.1.1"
+  }
+}
