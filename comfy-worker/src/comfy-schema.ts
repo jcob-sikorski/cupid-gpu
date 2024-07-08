@@ -177,7 +177,7 @@ const ipaSchema = z.object({
   weightType: WeightTypeEnum,
   startingStep: z.number().min(0).max(1).step(0.001),
   endingStep: z.number().min(0).max(1).step(0.001),
-  airCodeEnabled: z.boolean(),
+  airCodeEnabled: z.boolean().optional(),
   airCode: z.string().optional(),
 });
 
