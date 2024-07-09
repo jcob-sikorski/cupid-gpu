@@ -22,11 +22,7 @@
         "391",
         0
       ],
-      "batch_size": 4,
-      "lora_stack": [
-        "207",
-        0
-      ]
+      "batch_size": 4
     },
     "class_type": "Efficient Loader",
     "_meta": {
@@ -242,7 +238,7 @@
   "222": {
     "inputs": {
       "text": "",
-      "seed": 377,
+      "seed": 15,
       "autorefresh": "No"
     },
     "class_type": "DPRandomGenerator",
@@ -252,7 +248,7 @@
   },
   "229": {
     "inputs": {
-      "seed": 135062736147378,
+      "seed": 576420340971280,
       "steps": 30,
       "cfg": 5,
       "sampler_name": "dpmpp_sde_gpu",
@@ -261,7 +257,7 @@
       "preview_method": "auto",
       "vae_decode": "true",
       "model": [
-        "373",
+        "206",
         0
       ],
       "positive": [
@@ -278,42 +274,6 @@
       ],
       "optional_vae": [
         "206",
-        4
-      ]
-    },
-    "class_type": "KSampler (Efficient)",
-    "_meta": {
-      "title": "KSampler (Efficient)"
-    }
-  },
-  "246": {
-    "inputs": {
-      "seed": 587273246580578,
-      "steps": 30,
-      "cfg": 4,
-      "sampler_name": "dpmpp_sde_gpu",
-      "scheduler": "normal",
-      "denoise": 0.35000000000000003,
-      "preview_method": "auto",
-      "vae_decode": "true",
-      "model": [
-        "412",
-        0
-      ],
-      "positive": [
-        "229",
-        1
-      ],
-      "negative": [
-        "229",
-        2
-      ],
-      "latent_image": [
-        "229",
-        3
-      ],
-      "optional_vae": [
-        "229",
         4
       ]
     },
@@ -337,7 +297,7 @@
   },
   "280": {
     "inputs": {
-      "image": "Cupid AI (2).png",
+      "image": "2024-05-26 19.14.10.jpg",
       "upload": "image"
     },
     "class_type": "LoadImage",
@@ -367,15 +327,7 @@
     "inputs": {
       "strength": 1,
       "start_percent": 0,
-      "end_percent": 1,
-      "control_net": [
-        "307",
-        0
-      ],
-      "image": [
-        "289",
-        0
-      ]
+      "end_percent": 1
     },
     "class_type": "Control Net Stacker",
     "_meta": {
@@ -499,8 +451,8 @@
   "313": {
     "inputs": {
       "images": [
-        "314",
-        0
+        "229",
+        5
       ]
     },
     "class_type": "PreviewImage",
@@ -511,7 +463,7 @@
   "314": {
     "inputs": {
       "upscale_by": 2,
-      "seed": 348004154411988,
+      "seed": 490302661339882,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
@@ -529,26 +481,6 @@
       "seam_fix_padding": 16,
       "force_uniform_tiles": true,
       "tiled_decode": false,
-      "image": [
-        "246",
-        5
-      ],
-      "model": [
-        "413",
-        0
-      ],
-      "positive": [
-        "246",
-        1
-      ],
-      "negative": [
-        "246",
-        2
-      ],
-      "vae": [
-        "246",
-        4
-      ],
       "upscale_model": [
         "318",
         0
@@ -576,19 +508,11 @@
       "start_at": 0,
       "end_at": 1,
       "embeds_scaling": "V only",
-      "model": [
-        "206",
-        0
-      ],
       "ipadapter": [
         "410",
         0
       ],
       "image": [
-        "280",
-        0
-      ],
-      "image_negative": [
         "420",
         0
       ],
@@ -685,10 +609,6 @@
       "start_at": 0,
       "end_at": 1,
       "embeds_scaling": "V only",
-      "model": [
-        "251",
-        0
-      ],
       "ipadapter": [
         "410",
         0
@@ -715,10 +635,6 @@
       "start_at": 0,
       "end_at": 1,
       "embeds_scaling": "V only",
-      "model": [
-        "407",
-        0
-      ],
       "ipadapter": [
         "410",
         0
@@ -739,7 +655,7 @@
   },
   "420": {
     "inputs": {
-      "image": "00117-sRAW.png",
+      "image": "ComfyUI_temp_hsnqk_00008_.png",
       "upload": "image"
     },
     "class_type": "LoadImage",
@@ -749,7 +665,7 @@
   },
   "421": {
     "inputs": {
-      "image": "ComfyUI_temp_hsnqk_00008_.png",
+      "image": "00117-sRAW.png",
       "upload": "image"
     },
     "class_type": "LoadImage",

@@ -53,12 +53,12 @@ async function getImages(ws: WebSocket, prompt: any): Promise<Buffer[]> {
   return new Promise((resolve, reject) => {
     console.log('Setting up WebSocket message listener');
     ws.on('message', async (data: WebSocket.RawData) => {
-      console.log(`Message received: ${data.toString('hex')}`);
+      console.log('Message received.');
       
       let messageString: string;
       if (data instanceof Buffer) {
         messageString = data.toString('utf-8');
-        console.log(`Converted buffer to string: ${messageString}`);
+        console.log('Converted buffer to string.');
       } else if (typeof data === 'string') {
         messageString = data;
       } else {
@@ -68,7 +68,7 @@ async function getImages(ws: WebSocket, prompt: any): Promise<Buffer[]> {
 
       try {
         const message = JSON.parse(messageString);
-        console.log(`Parsed message: ${JSON.stringify(message)}`);
+        console.log('Parsed message.');
 
         if (message.type === 'executing' && message.data.node === null && message.data.prompt_id === prompt_id) {
           console.log('EXECUTION IS DONE');
@@ -118,6 +118,99 @@ async function saveImages(images: Buffer[]): Promise<string[]> {
   return savedImagePaths;
 }
 
+function modifyWorkflow(
+  workflowJson: any, 
+  workflow: ComfyGenerateType, 
+  downloadedFiles: {
+    ipas: string[];
+    controlnet: string | null;
+    upscaler: string | null;
+  }
+): any {
+  // Clone the workflow to avoid modifying the original
+  const modifiedWorkflow = JSON.parse(JSON.stringify(workflowJson));
+
+  // Update the DPRandomGenerator node (key "222")
+  if (modifiedWorkflow["222"]) {
+    // Update the text input with the positive prompt
+    modifiedWorkflow["222"].inputs.text = workflow.posPrompt;
+
+    // If you want to keep the seed random or use a specific seed, you can modify it here
+    // modifiedWorkflow["222"].inputs.seed = workflow.seed; // Uncomment if you want to use the workflow seed
+  } else {
+    console.warn("Node with key '222' (DPRandomGenerator) not found in the workflow.");
+  }
+
+  // Update the Efficient Loader node (key "206")
+  if (modifiedWorkflow["206"]) {
+    // Update the batch size
+    modifiedWorkflow["206"].inputs.batch_size = workflow.batchSize || 4; // Default to 4 if not provided
+
+    // Update the negative prompt if workflow.negPrompt has content
+    if (workflow.negPrompt && workflow.negPrompt.length > 0) {
+      modifiedWorkflow["206"].inputs.negative = workflow.negPrompt;
+    }
+
+    // Update the ckpt_name if workflow.model is available
+    if (workflow.model && workflow.model.length > 0) {
+      modifiedWorkflow["206"].inputs.ckpt_name = workflow.model;
+    }
+
+    // Update the ckpt_name if workflow.model is available
+    if (workflow.clipSkip) {
+      modifiedWorkflow["206"].inputs.clip_skip = workflow.clipSkip;
+    }
+  } else {
+    console.warn("Node with key '206' (Efficient Loader) not found in the workflow.");
+  }
+
+  // Update the width (key "390")
+  if (modifiedWorkflow["390"] && workflow.width) {
+    modifiedWorkflow["390"].inputs.Number = workflow.width.toString();
+  } else {
+    console.warn("Node with key '390' (Width) not found in the workflow or workflow.width is not provided.");
+  }
+
+  // Update the height (key "391")
+  if (modifiedWorkflow["391"] && workflow.height) {
+    modifiedWorkflow["391"].inputs.Number = workflow.height.toString();
+  } else {
+    console.warn("Node with key '391' (Height) not found in the workflow or workflow.height is not provided.");
+  }
+
+  if (modifiedWorkflow["229"]) {
+    if (workflow.steps) {
+      modifiedWorkflow["229"].inputs.steps = workflow.steps;
+    }
+
+    if (workflow.CFGScale) {
+      modifiedWorkflow["229"].inputs.cfg = workflow.CFGScale;
+    }
+
+    if (workflow.sampler) {
+      modifiedWorkflow["229"].inputs.sampler_name = workflow.sampler;
+    }
+
+    if (workflow.scheduler) {
+      modifiedWorkflow["229"].inputs.scheduler = workflow.scheduler;
+    }
+
+    if (workflow.denoise) {
+      modifiedWorkflow["229"].inputs.denoise = workflow.denoise;
+    }
+
+    if (workflow.customSeedEnabled && workflow.customSeed) {
+      modifiedWorkflow["229"].inputs.seed = workflow.customSeed;
+    }
+  }
+
+  // Update other parts of the workflow as needed
+  // (You can add the IPA, ControlNet, Upscaler, and other modifications here)
+
+  console.log('Modified workflow:', modifiedWorkflow);
+  return modifiedWorkflow;
+}
+
 export async function processComfy(
   downloadedFiles: {
     ipas: string[];
@@ -132,11 +225,13 @@ export async function processComfy(
   //       based on the worflow sent from the backend 
   //       modify the workflow json sent to the comfy
   // Read the workflow.json file
-  const workflowPath = path.join(process.cwd(), 'src/workflow.json');
+  const workflowPath = path.join(process.cwd(), 'src/base_workflow.json');
   console.log(`Reading workflow from: ${workflowPath}`);
-  const workflowJson = await fs.readFile(workflowPath, 'utf-8');
-  let workflowData = JSON.parse(workflowJson);
-  console.log('Workflow JSON loaded:', JSON.stringify(workflowData, null, 2));
+
+  let workflowJson = JSON.parse(await fs.readFile(workflowPath, 'utf-8'));
+  console.log('Workflow JSON loaded:', JSON.stringify(workflowJson, null, 2));
+
+  workflowJson = modifyWorkflow(workflowJson, workflow, downloadedFiles);
   
   try {
     console.log(`Connecting to WebSocket: ws://${serverAddress}/ws?clientId=${clientId}`);
@@ -147,7 +242,7 @@ export async function processComfy(
         console.log('WebSocket connection opened');
         try {
           console.log('Starting image generation');
-          const images = await getImages(ws, workflowData);
+          const images = await getImages(ws, workflowJson);
           console.log(`Image generation completed, received ${images.length} images`);
           const savedImagePaths = await saveImages(images);
           console.log('Image saving completed');

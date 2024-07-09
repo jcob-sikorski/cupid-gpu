@@ -179,6 +179,7 @@ const ipaSchema = z.object({
   endingStep: z.number().min(0).max(1).step(0.001),
   airCodeEnabled: z.boolean().optional(),
   airCode: z.string().optional(),
+  useForAll: z.boolean().optional(),
 });
 
 export const controlnetSchema = z

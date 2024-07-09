@@ -216,20 +216,26 @@ export async function startComfyWorker() {
           success: false,
           error: "Uninitialized response",
         };
-
+        
         try {
           const outputPaths = await processComfy(
             downloadedFiles,
             job.data.workflow
           );
           console.log(`ComfyUI processing completed, output paths:`, outputPaths);
+        
+          console.log("job.data.output", job.data.output);
           
-          if (!Array.isArray(job.data.output) || job.data.output.length !== outputPaths.length) {
-            throw new Error('Mismatch between number of output paths and output keys');
+          // Get the last 'batchSize' number of elements from outputPaths
+          const batchSize = job.data.workflow.batchSize || job.data.output.length;
+          const lastOutputPaths = outputPaths.slice(-batchSize);
+          
+          if (!Array.isArray(job.data.output) || job.data.output.length !== lastOutputPaths.length) {
+            console.warn('Mismatch between number of output paths and output keys');
           }
           
-          for (let i = 0; i < outputPaths.length; i++) {
-            const outputPath = outputPaths[i];
+          for (let i = 0; i < lastOutputPaths.length; i++) {
+            const outputPath = lastOutputPaths[i];
             const outputKey = job.data.output[i];
           
             const maxRetries = 3;
