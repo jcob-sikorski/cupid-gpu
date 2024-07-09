@@ -204,6 +204,55 @@ function modifyWorkflow(
     }
   }
 
+  if (modifiedWorkflow["207"]) {
+    const loraInputs = modifiedWorkflow["207"].inputs;
+    let enabledLoraCount = 0;
+  
+    // Iterate through workflow loras
+    workflow.loras.forEach((lora, index) => {
+      if (index < 5) {  // Ensure we only process up to 5 LoRAs
+        const i = index + 1;
+        if (lora.enabled) {
+          // If lora is enabled, set its model and parameters in modifiedWorkflow
+          loraInputs[`lora_name_${i}`] = lora.model;
+          loraInputs[`lora_wt_${i}`] = lora.weightType;
+          loraInputs[`model_str_${i}`] = 1;  // Default value, adjust if needed
+          loraInputs[`clip_str_${i}`] = 1;   // Default value, adjust if needed
+          enabledLoraCount++;
+        } else {
+          // If lora is disabled, set the modifiedWorkflow model to "None"
+          loraInputs[`lora_name_${i}`] = "None";
+          loraInputs[`lora_wt_${i}`] = 0;
+          loraInputs[`model_str_${i}`] = 1;
+          loraInputs[`clip_str_${i}`] = 1;
+        }
+      }
+    });
+  
+    // Handle LoRA stack
+    if (enabledLoraCount === 0) {
+      // Remove lora_stack if no LoRAs are enabled
+      if (modifiedWorkflow["206"] && modifiedWorkflow["206"].inputs.lora_stack) {
+        delete modifiedWorkflow["206"].inputs.lora_stack;
+      }
+    } else {
+      // Check if lora_stack exists in 206 and add 207 to it
+      if (modifiedWorkflow["206"]) {
+        if (!modifiedWorkflow["206"].inputs.lora_stack) {
+          modifiedWorkflow["206"].inputs.lora_stack = ["207", 0];
+        } else if (!modifiedWorkflow["206"].inputs.lora_stack.includes("207")) {
+          modifiedWorkflow["206"].inputs.lora_stack.unshift("207");
+        }
+      }
+    }
+  
+    // Update LoRA in 206
+    if (modifiedWorkflow["206"]) {
+      const firstEnabledLora = workflow.loras.find(lora => lora.enabled);
+      modifiedWorkflow["206"].inputs.lora_name = firstEnabledLora ? firstEnabledLora.model : "None";
+    }
+  }
+
   // Update other parts of the workflow as needed
   // (You can add the IPA, ControlNet, Upscaler, and other modifications here)
 
@@ -225,7 +274,7 @@ export async function processComfy(
   //       based on the worflow sent from the backend 
   //       modify the workflow json sent to the comfy
   // Read the workflow.json file
-  const workflowPath = path.join(process.cwd(), 'src/base_workflow.json');
+  const workflowPath = path.join(process.cwd(), 'src/lora_workflow.json');
   console.log(`Reading workflow from: ${workflowPath}`);
 
   let workflowJson = JSON.parse(await fs.readFile(workflowPath, 'utf-8'));
