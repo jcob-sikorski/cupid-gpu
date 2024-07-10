@@ -22,11 +22,7 @@
         "391",
         0
       ],
-      "batch_size": 4,
-      "lora_stack": [
-        "207",
-        0
-      ]
+      "batch_size": 4
     },
     "class_type": "Efficient Loader",
     "_meta": {
@@ -46,7 +42,7 @@
       "model_str_2": 1,
       "clip_str_2": 1,
       "lora_name_3": "detail_slider_v4.safetensors",
-      "lora_wt_3": 0.25,
+      "lora_wt_3": 2,
       "model_str_3": 1,
       "clip_str_3": 1,
       "lora_name_4": "exposure_control_v10.safetensors",
@@ -241,8 +237,8 @@
   },
   "222": {
     "inputs": {
-      "text": "",
-      "seed": 84,
+      "text": "(amateur:1.2), amateur candid selfie of 19 year old female, brown eyes, cute, big boobs, big cleavage, huge breasts, mixed race black, small nose, long, messy hair, neutral face, skin pores, wearing {black|blue|orange|white|green|purple} {blouse|t-shirt|dress|gym bra}, {indoors bedroom|messy living room|bathroom|messy bedroom|school classroom|hospital}",
+      "seed": 1060,
       "autorefresh": "No"
     },
     "class_type": "DPRandomGenerator",
@@ -252,7 +248,7 @@
   },
   "229": {
     "inputs": {
-      "seed": 576420340971280,
+      "seed": 590464624596597,
       "steps": 30,
       "cfg": 5,
       "sampler_name": "dpmpp_sde_gpu",
@@ -301,7 +297,7 @@
   },
   "280": {
     "inputs": {
-      "image": "2024-05-26 19.14.10.jpg",
+      "image": "ComfyUI_temp_hsnqk_00008_.png",
       "upload": "image"
     },
     "class_type": "LoadImage",
@@ -320,22 +316,11 @@
   },
   "284": {
     "inputs": {
-      "control_net_name": "control_v11f1p_sd15_depth_fp16.safetensors"
+      "control_net_name": "control_v11p_sd15_canny_fp16.safetensors"
     },
     "class_type": "ControlNetLoader",
     "_meta": {
       "title": "Load ControlNet Model"
-    }
-  },
-  "288": {
-    "inputs": {
-      "strength": 1,
-      "start_percent": 0,
-      "end_percent": 1
-    },
-    "class_type": "Control Net Stacker",
-    "_meta": {
-      "title": "Control Net Stacker"
     }
   },
   "289": {
@@ -401,57 +386,6 @@
       "title": "DWPose Estimator"
     }
   },
-  "306": {
-    "inputs": {
-      "control_net_name": "control_v11p_sd15_canny_fp16.safetensors"
-    },
-    "class_type": "ControlNetLoader",
-    "_meta": {
-      "title": "Load ControlNet Model"
-    }
-  },
-  "307": {
-    "inputs": {
-      "any_01": [
-        "284",
-        0
-      ],
-      "any_02": [
-        "306",
-        0
-      ],
-      "any_03": [
-        "308",
-        0
-      ],
-      "any_04": [
-        "309",
-        0
-      ]
-    },
-    "class_type": "Any Switch (rgthree)",
-    "_meta": {
-      "title": "Any Switch (rgthree)"
-    }
-  },
-  "308": {
-    "inputs": {
-      "control_net_name": "control_v11e_sd15_ip2p_fp16.safetensors"
-    },
-    "class_type": "ControlNetLoader",
-    "_meta": {
-      "title": "Load ControlNet Model"
-    }
-  },
-  "309": {
-    "inputs": {
-      "control_net_name": "control_v11p_sd15_openpose_fp16.safetensors"
-    },
-    "class_type": "ControlNetLoader",
-    "_meta": {
-      "title": "Load ControlNet Model"
-    }
-  },
   "313": {
     "inputs": {
       "images": [
@@ -467,7 +401,7 @@
   "314": {
     "inputs": {
       "upscale_by": 2,
-      "seed": 606014498912390,
+      "seed": 237473059521317,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
@@ -517,6 +451,10 @@
         0
       ],
       "image": [
+        "280",
+        0
+      ],
+      "image_negative": [
         "420",
         0
       ],
@@ -531,12 +469,7 @@
     }
   },
   "374": {
-    "inputs": {
-      "image": [
-        "280",
-        0
-      ]
-    },
+    "inputs": {},
     "class_type": "DF_Get_image_size",
     "_meta": {
       "title": "Get image size"
@@ -544,7 +477,7 @@
   },
   "375": {
     "inputs": {
-      "image": "a986542861d2e27f74fd95b68d18bccb.jpg",
+      "image": "image (35).jpeg",
       "upload": "image"
     },
     "class_type": "LoadImage",
@@ -563,30 +496,17 @@
   },
   "391": {
     "inputs": {
-      "Number": "512"
+      "Number": "768"
     },
     "class_type": "Int",
     "_meta": {
       "title": "Int"
     }
   },
-  "404": {
-    "inputs": {
-      "ckpt_air": "urn:air:sd1:checkpoint:civitai:139565@524032",
-      "ckpt_name": "edgeOfRealism_eorV20Fp16BakedVAE.safetensors",
-      "api_key": 4,
-      "download_chunks": null,
-      "download_path": "models\\checkpoints"
-    },
-    "class_type": "CivitAI_Checkpoint_Loader",
-    "_meta": {
-      "title": "CivitAI Checkpoint Loader"
-    }
-  },
   "407": {
     "inputs": {
       "ckpt_air": "{model_id}@{model_version}",
-      "ckpt_name": "pornmasterAmateur_fullV6.safetensors",
+      "ckpt_name": "epicphotogasm_lastUnicorn.safetensors",
       "api_key": "4",
       "download_chunks": null,
       "download_path": "models\\checkpoints"
@@ -613,6 +533,10 @@
       "start_at": 0,
       "end_at": 1,
       "embeds_scaling": "V only",
+      "model": [
+        "251",
+        0
+      ],
       "ipadapter": [
         "410",
         0
@@ -639,6 +563,10 @@
       "start_at": 0,
       "end_at": 1,
       "embeds_scaling": "V only",
+      "model": [
+        "407",
+        0
+      ],
       "ipadapter": [
         "410",
         0
@@ -669,12 +597,53 @@
   },
   "421": {
     "inputs": {
-      "image": "00117-sRAW.png",
+      "image": "ComfyUI_temp_hsnqk_00008_.png",
       "upload": "image"
     },
     "class_type": "LoadImage",
     "_meta": {
       "title": "Load Image"
+    }
+  },
+  "436": {
+    "inputs": {
+      "strength": 1,
+      "start_percent": 0,
+      "end_percent": 1
+    },
+    "class_type": "Control Net Stacker",
+    "_meta": {
+      "title": "Control Net Stacker"
+    }
+  },
+  "439": {
+    "inputs": {
+      "control_net_name": "control_v11p_sd15_openpose_fp16.safetensors"
+    },
+    "class_type": "ControlNetLoader",
+    "_meta": {
+      "title": "Load ControlNet Model"
+    }
+  },
+  "440": {
+    "inputs": {
+      "control_net_name": "control_v11f1p_sd15_depth_fp16.safetensors"
+    },
+    "class_type": "ControlNetLoader",
+    "_meta": {
+      "title": "Load ControlNet Model"
+    }
+  },
+  "442": {
+    "inputs": {
+      "image": [
+        "375",
+        0
+      ]
+    },
+    "class_type": "DF_Get_image_size",
+    "_meta": {
+      "title": "Get image size"
     }
   }
 }

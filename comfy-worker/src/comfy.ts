@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import * as fsfs from 'fs';
 
 const clientId = uuidv4();
 // const serverAddress = '89.187.159.48:40171';
@@ -116,6 +117,42 @@ async function saveImages(images: Buffer[]): Promise<string[]> {
   }
   console.log('ENDING: saveImages function');
   return savedImagePaths;
+}
+
+function logJsonDepth(obj: any, indent = 0, skipPath = '') {
+  if (obj === null) {
+    console.log(`${' '.repeat(indent * 2)}null`);
+    return;
+  }
+
+  if (typeof obj !== 'object') {
+    console.log(`${' '.repeat(indent * 2)}${obj}`);
+    return;
+  }
+
+  if (Array.isArray(obj)) {
+    console.log(`${' '.repeat(indent * 2)}[`);
+    obj.forEach((item, index) => {
+      console.log(`${' '.repeat((indent + 1) * 2)}${index}:`);
+      logJsonDepth(item, indent + 2, `${skipPath}[${index}]`);
+    });
+    console.log(`${' '.repeat(indent * 2)}]`);
+    return;
+  }
+
+  Object.keys(obj).forEach(key => {
+    const value = obj[key];
+    const indentation = ' '.repeat(indent * 2);
+    const currentPath = skipPath ? `${skipPath}.${key}` : key;
+    
+    if (currentPath === '207.inputs') {
+      console.log(`${indentation}${key}: [inputs omitted]`);
+      return;
+    }
+
+    console.log(`${indentation}${key}:`);
+    logJsonDepth(value, indent + 1, currentPath);
+  });
 }
 
 function modifyWorkflow(
@@ -253,10 +290,76 @@ function modifyWorkflow(
     }
   }
 
-  // Update other parts of the workflow as needed
-  // (You can add the IPA, ControlNet, Upscaler, and other modifications here)
+  if (modifiedWorkflow["436"]) {
+    if (workflow.controlnet.enabled) {
+      // Check if cnet_stack exists in 206 and add cnet (288) to it
+      if (modifiedWorkflow["206"]) {
+        if (!modifiedWorkflow["206"].inputs.cnet_stack) {
+          modifiedWorkflow["206"].inputs.cnet_stack = ["436", 0];
+        } else if (!modifiedWorkflow["206"].inputs.cnet_stack.includes("436")) {
+          modifiedWorkflow["206"].inputs.cnet_stack.unshift("436");
+        }
 
-  console.log('Modified workflow:', modifiedWorkflow);
+        // TODO: bring new controlnet dimensions
+        if (workflow.useControlnetDims) {
+          // If controlnet dimensions are enabled use controlnet image dims
+          modifiedWorkflow["206"].inputs.empty_latent_width = ["442", 0];
+          modifiedWorkflow["206"].inputs.empty_latent_height = ["442", 1];
+        } else {
+          // If controlnet dimensions are not enabled use user's dims
+          modifiedWorkflow["206"].inputs.empty_latent_width = ["390", 0];
+          modifiedWorkflow["206"].inputs.empty_latent_height = ["391", 0];
+        }
+      }
+
+      // Check if image in 288 exists and addopenpose (294), dwpose (295), canny (290) or midas (289) to it
+      if (modifiedWorkflow["436"]) {
+        console.log("MODIFIED WORKFLOW 288:", modifiedWorkflow["436"].inputs)
+        if (!modifiedWorkflow["436"].inputs.image) {
+          modifiedWorkflow["436"].inputs.image = ["", 0];
+        } else if (!modifiedWorkflow["436"].inputs.image.includes("")) {
+          modifiedWorkflow["436"].inputs.image.unshift("");
+        }
+
+        // Add the respective number to the input.image in the place where "" are
+        switch (workflow.controlnet.model) {
+          case "midas":
+            modifiedWorkflow["436"].inputs.control_net = ["440", 0]
+            modifiedWorkflow["436"].inputs.image = ["289", 0];
+            break;
+          case "canny":
+            modifiedWorkflow["436"].inputs.control_net = ["284", 0]
+            modifiedWorkflow["436"].inputs.image = ["290", 0];
+            break;
+          case "openpose":
+            modifiedWorkflow["436"].inputs.control_net = ["439", 0]
+            modifiedWorkflow["436"].inputs.image = ["294", 0];
+            break;
+          case "dwpose":
+            modifiedWorkflow["436"].inputs.control_net = ["439", 0]
+            modifiedWorkflow["436"].inputs.image = ["295", 0];
+            break;
+        }
+        console.log("MODIFIED WORKFLOW 288:", modifiedWorkflow["436"].inputs)
+      }
+
+      // attempt pass the path of the uploaded image to the load image (375)
+      if (modifiedWorkflow["375"]) {
+        modifiedWorkflow["375"].inputs.image = downloadedFiles.controlnet
+      }
+    } else if (modifiedWorkflow["206"]) {
+      // If controlnet is disabled use user's dims
+      modifiedWorkflow["206"].inputs.empty_latent_width = ["390", 0];
+      modifiedWorkflow["206"].inputs.empty_latent_height = ["391", 0];
+
+      // Attempt to remove cnet stack from 206
+      if (modifiedWorkflow["206"] && modifiedWorkflow["206"].inputs.cnet_stack) {
+        delete modifiedWorkflow["206"].inputs.cnet_stack;
+      }
+    }
+  }
+
+  fsfs.writeFileSync('modified_workflow.json', JSON.stringify(modifiedWorkflow, null, 2), 'utf8');
   return modifiedWorkflow;
 }
 
@@ -274,11 +377,11 @@ export async function processComfy(
   //       based on the worflow sent from the backend 
   //       modify the workflow json sent to the comfy
   // Read the workflow.json file
-  const workflowPath = path.join(process.cwd(), 'src/lora_workflow.json');
+  const workflowPath = path.join(process.cwd(), 'src/controlnet_workflow.json');
   console.log(`Reading workflow from: ${workflowPath}`);
 
   let workflowJson = JSON.parse(await fs.readFile(workflowPath, 'utf-8'));
-  console.log('Workflow JSON loaded:', JSON.stringify(workflowJson, null, 2));
+  console.log('Workflow JSON loaded');
 
   workflowJson = modifyWorkflow(workflowJson, workflow, downloadedFiles);
   

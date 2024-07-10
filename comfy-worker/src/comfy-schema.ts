@@ -150,14 +150,14 @@ export type LoraEnumType = z.infer<typeof LoraModelEnum>;
 
 const ControlnetEnum = z.enum([
   "midas",
-  "ip2p",
+  "dwpose",
   "canny",
   "openpose"
 ]);
 
 export type ControlnetEnumType = z.infer<typeof ControlnetEnum>;
 
-export const loraSchema = z.object({
+const loraSchema = z.object({
   enabled: z.boolean(),
   model: LoraModelEnum,
   weightType: z.number().min(-10).max(10).step(0.01),
@@ -180,9 +180,8 @@ const ipaSchema = z.object({
 export const controlnetSchema = z
   .object({
     enabled: z.boolean(),
-    file: z.instanceof(File).optional(),
+    fileType: z.string().optional(),
     fileKey: z.string().optional(),
-    image: z.string().optional(),
     model: z.string().optional(),
     strength: z.number().min(0).max(10).step(0.01),
     startPercent: z.number().min(0).max(1).step(0.01),
@@ -203,7 +202,7 @@ export const refinementSchema = z
     airCode: z.string().optional(),
   })
 
-  export const upscalerSchema = z
+export const upscalerSchema = z
   .object({
     enabled: z.boolean(),
     file: z.instanceof(File).optional(),
@@ -227,6 +226,7 @@ export const generateImageSchema = z.object({
   negPrompt: z.string().optional(),
   model: ModelEnum,
   useIPADims: z.boolean(),
+  useControlnetDims: z.boolean(),
   ipaDimensionSource: z.enum(["IPA1", "IPA2", "IPA3"]).optional(),
   height: z.number().int().min(512).max(1024),
   width: z.number().int().min(512).max(1024),
