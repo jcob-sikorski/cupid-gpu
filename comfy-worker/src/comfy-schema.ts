@@ -103,9 +103,6 @@ export type CAGEnumType = z.infer<typeof CAGEnum>;
 
 const LoraModelEnum = z.enum([
   "DarkLighting.safetensors",
-  "LCM_Lora_SD15.safetensors",
-  "LowRA.safetensors",
-  "SDXL_black_and_color_Sa_May.safetensors",
   "Transparent_Clothes_V2.safetensors",
   "add_detail.safetensors",
   "age_slider_v20.safetensors",
@@ -114,7 +111,6 @@ const LoraModelEnum = z.enum([
   "backlight_slider_v10.safetensors",
   "beard_slider_v10.safetensors",
   "breasts_slider_v10.safetensors",
-  "clothing_slider_v19_000000030.safetensors",
   "contrast_slider_v10.safetensors",
   "curly_hair_slider_v1.safetensors",
   "depth_of_field_slider_v1.safetensors",
@@ -129,7 +125,6 @@ const LoraModelEnum = z.enum([
   "eyebrows_slider_v2.safetensors",
   "filmgrain_slider_v1.safetensors",
   "fisheye_slider_v10.safetensors",
-  "flashlightphoto_v1.safetensors",
   "gender_slider_v1.safetensors",
   "hair_length_slider_v1.safetensors",
   "ip-adapter-faceid-plus_sd15_lora.safetensors",
