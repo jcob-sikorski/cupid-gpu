@@ -39,7 +39,7 @@ async function getHistory(promptId: string): Promise<any> {
     console.log('STARTING: getHistory function');
     console.log(`Sending GET request to http://${serverAddress}/history/${promptId}`);
     const { data } = await axios.get(`http://${serverAddress}/history/${promptId}`);
-    console.log(`GOT HISTORY FOR PROMPT ID ${promptId}: ${JSON.stringify(data)}`);
+    console.log(`GOT HISTORY FOR PROMPT ID ${promptId}`);
     console.log('ENDING: getHistory function');
     return data;
 }
@@ -69,13 +69,13 @@ async function getImages(ws: WebSocket, prompt: any): Promise<Buffer[]> {
 
       try {
         const message = JSON.parse(messageString);
-        console.log('Parsed message.');
+        // console.log('Parsed message.');
 
         if (message.type === 'executing' && message.data.node === null && message.data.prompt_id === prompt_id) {
           console.log('EXECUTION IS DONE');
           try {
             const history = await getHistory(prompt_id);
-            console.log(`Execution history: ${JSON.stringify(history)}`);
+            // console.log(`Execution history: ${JSON.stringify(history)}`);
             for (const node_id in history[prompt_id].outputs) {
               const node_output = history[prompt_id].outputs[node_id];
               if (node_output.images) {
@@ -87,7 +87,7 @@ async function getImages(ws: WebSocket, prompt: any): Promise<Buffer[]> {
             }
             resolve(rawImagesOutput);
           } catch (e) {
-            console.error(`WHILE READING EXECUTION HISTORY EXCEPTION OCCURRED: ${e}`);
+            // console.error(`WHILE READING EXECUTION HISTORY EXCEPTION OCCURRED: ${e}`);
             reject(e);
           }
         } else if (message.type === 'executed') {
@@ -99,7 +99,7 @@ async function getImages(ws: WebSocket, prompt: any): Promise<Buffer[]> {
           }
         }
       } catch (error) {
-        console.error('Error parsing WebSocket message:', error);
+        console.error('Error parsing WebSocket message.');
       }
     });
   });

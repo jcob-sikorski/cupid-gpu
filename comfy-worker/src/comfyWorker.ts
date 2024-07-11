@@ -144,28 +144,49 @@ export async function startComfyWorker() {
       console.log("Downloading input files");
       const downloadStart = Date.now();
 
+      const MAX_RETRIES = 3;
+      const INITIAL_DELAY = 1000; // 1 second
+      
       const downloadFile = async (fileKey: string, prefix: string): Promise<string | null> => {
         if (!fileKey) {
           console.log(`No file key provided for ${prefix}, skipping download`);
           return null;
         }
       
-        console.log(`Downloading file: ${fileKey}`);
-        try {
-          const stat = await minio.statObject(COMFY_BUCKET, fileKey);
-          console.log(`File stats for ${fileKey}:`, JSON.stringify(stat, null, 2));
-          const mime = stat.metaData["content-type"] as string;
-          console.log(`MIME type for ${fileKey}: ${mime}`);
-          const file = `${prefix}_${fileKey}.${extension(mime)}`;
-          const path = join(TEMP_DIR, file);
-          console.log(`File path for ${fileKey}: ${path}`);
-          await minio.fGetObject(COMFY_BUCKET, fileKey, path);
-          console.log(`File downloaded: ${path}`);
-          return path;
-        } catch (error) {
-          console.error(`Error downloading file ${fileKey}:`, error);
-          return null;
+        console.log(`Attempting to download file: ${fileKey}`);
+      
+        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+          try {
+            const stat = await minio.statObject(COMFY_BUCKET, fileKey);
+            console.log(`File stats for ${fileKey}:`, JSON.stringify(stat, null, 2));
+            const mime = stat.metaData["content-type"] as string;
+            console.log(`MIME type for ${fileKey}: ${mime}`);
+            const file = `${prefix}_${fileKey}.${extension(mime)}`;
+            const path = join(TEMP_DIR, file);
+            console.log(`File path for ${fileKey}: ${path}`);
+            await minio.fGetObject(COMFY_BUCKET, fileKey, path);
+            console.log(`File downloaded successfully: ${path}`);
+            return path;
+          } catch (error) {
+            console.error(`Error downloading file ${fileKey} (Attempt ${attempt}/${MAX_RETRIES}):`, error);
+            
+            if (attempt === MAX_RETRIES) {
+              console.error(`Max retries reached for file ${fileKey}. Giving up.`);
+              return null;
+            }
+      
+            const delay = exponentialDelay(INITIAL_DELAY, attempt);
+            console.log(`Retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+          }
         }
+      
+        return null; // This line should never be reached due to the return in the final catch block, but TypeScript might want it
+      };
+      
+      // Utility function for exponential backoff
+      const exponentialDelay = (initialDelay: number, attempt: number): number => {
+        return Math.floor(initialDelay * Math.pow(2, attempt - 1) + Math.random() * 1000);
       };
 
       try {
