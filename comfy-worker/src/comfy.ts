@@ -360,40 +360,104 @@ function modifyWorkflow(
   }
 
   if (workflow.refinement && workflow.refinement.enabled) {
-    // Add 443 component if it doesn't exist
-    if (!modifiedWorkflow["443"]) {
-      modifiedWorkflow["443"] = {
-        inputs: {
-          seed: workflow.refinement.customSeedEnabled ? workflow.refinement.customSeed : Math.floor(Math.random() * 4294967295),
-          steps: workflow.refinement.steps || 20,
-          cfg: workflow.refinement.CFGScale || 7,
-          sampler_name: workflow.refinement.sampler || "euler",
-          scheduler: workflow.refinement.scheduler || "normal",
-          denoise: workflow.refinement.denoise || 0.5,
-          preview_method: "auto",
-          vae_decode: "true",
-          model: ["229", 0],
-          positive: ["229", 1],
-          negative: ["229", 2],
-          latent_image: ["229", 3],
-          optional_vae: ["229", 4]
-        },
-        class_type: "KSampler (Efficient)",
-        _meta: {
-          title: "KSampler (Efficient) Refinement"
-        }
-      };
-    }
-
-    // Set 313 image component images to ["443", 5]
-    if (modifiedWorkflow["313"]) {
-      modifiedWorkflow["313"].inputs.images = ["443", 5];
+    modifiedWorkflow["443"] = {
+      inputs: {
+        seed: workflow.refinement.customSeedEnabled ? workflow.refinement.customSeed : Math.floor(Math.random() * 4294967295),
+        steps: workflow.refinement.steps || 20,
+        cfg: workflow.refinement.CFGScale || 7,
+        sampler_name: workflow.refinement.sampler || "euler",
+        scheduler: workflow.refinement.scheduler || "normal",
+        denoise: workflow.refinement.denoise || 0.5,
+        preview_method: "auto",
+        vae_decode: "true",
+        model: ["229", 0],
+        positive: ["229", 1],
+        negative: ["229", 2],
+        latent_image: ["229", 3],
+        optional_vae: ["229", 4]
+      },
+      class_type: "KSampler (Efficient)",
+      _meta: {
+        title: "KSampler (Efficient) Refinement"
+      }
     }
   } else {
-    // If refinement is disabled, set 313 image component images to ["229", 0]
-    if (modifiedWorkflow["313"]) {
-      modifiedWorkflow["313"].inputs.images = ["229", 5];
+    // Remove 443 component if it exists and refinement is disabled
+    if (modifiedWorkflow["443"]) {
+      delete modifiedWorkflow["443"];
     }
+  }
+
+  if (workflow.upscaler && workflow.upscaler.enabled) {
+    // Add 314 component if it doesn't exist
+    modifiedWorkflow["314"] = {
+      inputs: {
+        upscale_by: workflow.upscaler.upscaleBy || 2,
+        seed: workflow.upscaler.customSeedEnabled ? workflow.upscaler.customSeed : Math.floor(Math.random() * 4294967295),
+        steps: workflow.upscaler.steps || 30,
+        cfg: workflow.upscaler.CFGScale || 8,
+        sampler_name: workflow.upscaler.sampler || "euler",
+        scheduler: workflow.upscaler.scheduler || "normal",
+        denoise: workflow.upscaler.denoise || 0.15,
+        control_after_generate: workflow.upscaler.CAG || "randomize",
+        mode_type: "Linear",
+        tile_width: 512,
+        tile_height: 512,
+        mask_blur: 8,
+        tile_padding: 32,
+        seam_fix_mode: "None",
+        seam_fix_denoise: 1,
+        seam_fix_width: 64,
+        seam_fix_mask_blur: 8,
+        seam_fix_padding: 16,
+        force_uniform_tiles: true,
+        tiled_decode: false,
+        image: [
+          (workflow.refinement && workflow.refinement.enabled) ? "443" : "229",
+          5
+        ],
+        model: [
+          (workflow.refinement && workflow.refinement.enabled) ? "443" : "229",
+          0
+        ],
+        positive: [
+          (workflow.refinement && workflow.refinement.enabled) ? "443" : "229",
+          1
+        ],
+        negative: [
+          (workflow.refinement && workflow.refinement.enabled) ? "443" : "229",
+          2
+        ],
+        vae: [
+          (workflow.refinement && workflow.refinement.enabled) ? "443" : "229",
+          4
+        ],
+        upscale_model: [
+          "318",
+          0
+        ]
+      },
+      class_type: "UltimateSDUpscale",
+      _meta: {
+        "title": "Ultimate SD Upscale"
+      }
+    };
+  } else {
+    // Remove 314 component if it exists and upscaler is disabled
+    if (modifiedWorkflow["314"]) {
+      delete modifiedWorkflow["314"];
+    }
+  }
+
+  // if upscaler is enabled
+  if (workflow.upscaler && workflow.upscaler.enabled && modifiedWorkflow["313"]) {
+    modifiedWorkflow["313"].inputs.images = ["314", 0];
+  } // Set 313 image component images to ["443", 5]
+  else if (workflow.refinement && workflow.refinement.enabled && modifiedWorkflow["313"]) {
+    modifiedWorkflow["313"].inputs.images = ["443", 5];
+  } // If refinement and upscaler are disabled, set 313 image component images to ["229", 0]
+  else {
+    modifiedWorkflow["313"].inputs.images = ["229", 5];
   }
 
   fsfs.writeFileSync('modified_workflow.json', JSON.stringify(modifiedWorkflow, null, 2), 'utf8');
@@ -414,7 +478,7 @@ export async function processComfy(
   //       based on the worflow sent from the backend 
   //       modify the workflow json sent to the comfy
   // Read the workflow.json file
-  const workflowPath = path.join(process.cwd(), 'src/controlnet_workflow.json');
+  const workflowPath = path.join(process.cwd(), 'src/workflow.json');
   console.log(`Reading workflow from: ${workflowPath}`);
 
   let workflowJson = JSON.parse(await fs.readFile(workflowPath, 'utf-8'));

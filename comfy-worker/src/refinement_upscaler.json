@@ -1,7 +1,7 @@
 {
   "206": {
     "inputs": {
-      "ckpt_name": "epicphotogasm_amateurreallife.safetensors",
+      "ckpt_name": "epicphotogasm_ultimateFidelity.safetensors",
       "vae_name": "Baked VAE",
       "clip_skip": -1,
       "lora_name": "None",
@@ -22,7 +22,11 @@
         "391",
         0
       ],
-      "batch_size": 4
+      "batch_size": 1,
+      "cnet_stack": [
+        "436",
+        0
+      ]
     },
     "class_type": "Efficient Loader",
     "_meta": {
@@ -33,24 +37,24 @@
     "inputs": {
       "input_mode": "simple",
       "lora_count": 5,
-      "lora_name_1": "epiNoiseoffset_v2.pt",
-      "lora_wt_1": 0.5,
+      "lora_name_1": "None",
+      "lora_wt_1": 0,
       "model_str_1": 1,
       "clip_str_1": 1,
-      "lora_name_2": "clothing_slider_v19_000000030.safetensors",
-      "lora_wt_2": 1.2,
+      "lora_name_2": "None",
+      "lora_wt_2": 0,
       "model_str_2": 1,
       "clip_str_2": 1,
-      "lora_name_3": "detail_slider_v4.safetensors",
-      "lora_wt_3": 2,
+      "lora_name_3": "None",
+      "lora_wt_3": 0,
       "model_str_3": 1,
       "clip_str_3": 1,
-      "lora_name_4": "exposure_control_v10.safetensors",
-      "lora_wt_4": -0.35000000000000003,
+      "lora_name_4": "None",
+      "lora_wt_4": 0,
       "model_str_4": 1,
       "clip_str_4": 1,
-      "lora_name_5": "amateurMadness-05.safetensors",
-      "lora_wt_5": -0.35000000000000003,
+      "lora_name_5": "None",
+      "lora_wt_5": 0,
       "model_str_5": 1,
       "clip_str_5": 1,
       "lora_name_6": "add_detail.safetensors",
@@ -237,8 +241,8 @@
   },
   "222": {
     "inputs": {
-      "text": "(amateur:1.2), amateur candid selfie of 19 year old female, brown eyes, cute, big boobs, big cleavage, huge breasts, mixed race black, small nose, long, messy hair, neutral face, skin pores, wearing {black|blue|orange|white|green|purple} {blouse|t-shirt|dress|gym bra}, {indoors bedroom|messy living room|bathroom|messy bedroom|school classroom|hospital}",
-      "seed": 1060,
+      "text": "Man sitting in a rolls royce",
+      "seed": 1447,
       "autorefresh": "No"
     },
     "class_type": "DPRandomGenerator",
@@ -250,8 +254,8 @@
     "inputs": {
       "seed": 590464624596597,
       "steps": 30,
-      "cfg": 5,
-      "sampler_name": "dpmpp_sde_gpu",
+      "cfg": 4,
+      "sampler_name": "euler",
       "scheduler": "normal",
       "denoise": 1,
       "preview_method": "auto",
@@ -287,7 +291,7 @@
       "ckpt_air": "{model_id}@{model_version}",
       "ckpt_name": "edgeOfRealism_eorV20Fp16BakedVAE.safetensors",
       "api_key": 4,
-      "download_chunks": null,
+      "download_chunks": 0,
       "download_path": "models\\checkpoints"
     },
     "class_type": "CivitAI_Checkpoint_Loader",
@@ -389,8 +393,8 @@
   "313": {
     "inputs": {
       "images": [
-        "229",
-        5
+        "314",
+        0
       ]
     },
     "class_type": "PreviewImage",
@@ -401,7 +405,7 @@
   "314": {
     "inputs": {
       "upscale_by": 2,
-      "seed": 237473059521317,
+      "seed": 1091063156476461,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
@@ -419,6 +423,26 @@
       "seam_fix_padding": 16,
       "force_uniform_tiles": true,
       "tiled_decode": false,
+      "image": [
+        "443",
+        5
+      ],
+      "model": [
+        "443",
+        0
+      ],
+      "positive": [
+        "443",
+        1
+      ],
+      "negative": [
+        "443",
+        2
+      ],
+      "vae": [
+        "443",
+        4
+      ],
       "upscale_model": [
         "318",
         0
@@ -477,7 +501,7 @@
   },
   "375": {
     "inputs": {
-      "image": "image (35).jpeg",
+      "image": "/workspace/comfy-worker-copy/temp/controlnet_comfy-controlnet-YxQgFYMsz7xMRYZeFbKfF.png",
       "upload": "image"
     },
     "class_type": "LoadImage",
@@ -496,7 +520,7 @@
   },
   "391": {
     "inputs": {
-      "Number": "768"
+      "Number": "512"
     },
     "class_type": "Int",
     "_meta": {
@@ -508,7 +532,7 @@
       "ckpt_air": "{model_id}@{model_version}",
       "ckpt_name": "epicphotogasm_lastUnicorn.safetensors",
       "api_key": "4",
-      "download_chunks": null,
+      "download_chunks": 0,
       "download_path": "models\\checkpoints"
     },
     "class_type": "CivitAI_Checkpoint_Loader",
@@ -609,7 +633,15 @@
     "inputs": {
       "strength": 1,
       "start_percent": 0,
-      "end_percent": 1
+      "end_percent": 1,
+      "control_net": [
+        "284",
+        0
+      ],
+      "image": [
+        "290",
+        0
+      ]
     },
     "class_type": "Control Net Stacker",
     "_meta": {
@@ -644,6 +676,38 @@
     "class_type": "DF_Get_image_size",
     "_meta": {
       "title": "Get image size"
+    }
+  },
+  "443": {
+    "inputs": {
+      "seed": 4227728853,
+      "steps": 10,
+      "cfg": 5,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 0.5,
+      "preview_method": "auto",
+      "vae_decode": "true",
+      "model": [
+        "229",
+        0
+      ],
+      "positive": [
+        "229",
+        1
+      ],
+      "negative": [
+        "229",
+        2
+      ],
+      "latent_image": [
+        "229",
+        3
+      ]
+    },
+    "class_type": "KSampler (Efficient)",
+    "_meta": {
+      "title": "KSampler (Efficient) Refinement"
     }
   }
 }
