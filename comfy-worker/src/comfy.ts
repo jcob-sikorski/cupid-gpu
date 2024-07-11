@@ -359,6 +359,43 @@ function modifyWorkflow(
     }
   }
 
+  if (workflow.refinement && workflow.refinement.enabled) {
+    // Add 443 component if it doesn't exist
+    if (!modifiedWorkflow["443"]) {
+      modifiedWorkflow["443"] = {
+        inputs: {
+          seed: workflow.refinement.customSeedEnabled ? workflow.refinement.customSeed : Math.floor(Math.random() * 4294967295),
+          steps: workflow.refinement.steps || 20,
+          cfg: workflow.refinement.CFGScale || 7,
+          sampler_name: workflow.refinement.sampler || "euler",
+          scheduler: workflow.refinement.scheduler || "normal",
+          denoise: workflow.refinement.denoise || 0.5,
+          preview_method: "auto",
+          vae_decode: "true",
+          model: ["229", 0],
+          positive: ["229", 1],
+          negative: ["229", 2],
+          latent_image: ["229", 3],
+          optional_vae: ["229", 4]
+        },
+        class_type: "KSampler (Efficient)",
+        _meta: {
+          title: "KSampler (Efficient) Refinement"
+        }
+      };
+    }
+
+    // Set 313 image component images to ["443", 5]
+    if (modifiedWorkflow["313"]) {
+      modifiedWorkflow["313"].inputs.images = ["443", 5];
+    }
+  } else {
+    // If refinement is disabled, set 313 image component images to ["229", 0]
+    if (modifiedWorkflow["313"]) {
+      modifiedWorkflow["313"].inputs.images = ["229", 5];
+    }
+  }
+
   fsfs.writeFileSync('modified_workflow.json', JSON.stringify(modifiedWorkflow, null, 2), 'utf8');
   return modifiedWorkflow;
 }
