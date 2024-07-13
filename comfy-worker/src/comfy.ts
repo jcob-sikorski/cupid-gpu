@@ -159,7 +159,7 @@ function modifyWorkflow(
   workflowJson: any, 
   workflow: ComfyGenerateType, 
   downloadedFiles: {
-    ipas: string[];
+    ipas: (string | null)[];
     controlnet: string | null;
     upscaler: string | null;
   }
@@ -238,6 +238,18 @@ function modifyWorkflow(
 
     if (workflow.customSeedEnabled && workflow.customSeed) {
       modifiedWorkflow["229"].inputs.seed = workflow.customSeed;
+    }
+
+    if (workflow.ipas && workflow.ipas[0].enabled) {
+      modifiedWorkflow["229"].inputs.model = [
+        "373",
+        0
+      ];
+    } else {
+      modifiedWorkflow["229"].inputs.model = [
+        "206",
+        0
+      ];
     }
   }
 
@@ -370,7 +382,6 @@ function modifyWorkflow(
         denoise: workflow.refinement.denoise || 0.5,
         preview_method: "auto",
         vae_decode: "true",
-        model: ["229", 0],
         positive: ["229", 1],
         negative: ["229", 2],
         latent_image: ["229", 3],
@@ -380,6 +391,19 @@ function modifyWorkflow(
       _meta: {
         title: "KSampler (Efficient) Refinement"
       }
+    }
+
+    // if ipa enabled then connect to it else connect to the ksampler
+    if (workflow.ipas && workflow.ipas[1].enabled) {
+      modifiedWorkflow["443"].inputs.model = [
+        "412",
+        0
+      ];
+    } else {
+      modifiedWorkflow["443"].inputs.model = [
+        "229",
+        0
+      ];
     }
   } else {
     // Remove 443 component if it exists and refinement is disabled
@@ -442,10 +466,164 @@ function modifyWorkflow(
         "title": "Ultimate SD Upscale"
       }
     };
+
+    // if last ipa is enabled the connect o it esle to the refinement if enabled
+    // else to the first ksampler
+    if (workflow.ipas && workflow.ipas[2].enabled) {
+      modifiedWorkflow["314"].inputs.model = [
+        "413",
+        0
+      ]
+    } else if (workflow.refinement && workflow.refinement.enabled) {
+      modifiedWorkflow["314"].inputs.model = [
+        "443",
+        0
+      ]
+    } else {
+      modifiedWorkflow["314"].inputs.model = [
+        "229",
+        0
+      ]
+    }
   } else {
     // Remove 314 component if it exists and upscaler is disabled
     if (modifiedWorkflow["314"]) {
       delete modifiedWorkflow["314"];
+    }
+  }
+
+  // TODO: attempt to disconnect ipas
+  // TODO: set the images for each load image
+
+  // for each ipa
+  //    if ipa is enabled
+  //       attempt to create and set the parameters of 373, 412, 413 ipa respectively
+  //       if first ipa is enabled connect ipa's model to 206 and 229 model to ipa's model ✅
+  //        else if second ipa is enabled and refinement too connect ipa's model to 229 and 443 model to ipa's model ✅
+  //            else if third ipa is enabled and upscaler is enabled connect ipa's model to 443 (if refinement enabled - else to 229)
+  //                    and 314 model to ipa's model ✅
+  //    else
+  //      attempt to disconnect all ipas (remove connections from efficient and ksampler and upscaler and connect them back)
+
+  if (workflow.ipas && workflow.ipas[0].enabled) {
+    modifiedWorkflow["373"] = {
+      inputs: {
+        weight: workflow.ipas[0].weight || 1,
+        weight_type: workflow.ipas[0].weightType || "strong style transfer",
+        combine_embeds: "average",
+        start_at: workflow.ipas[0].startingStep || 0,
+        end_at: workflow.ipas[0].endingStep || 1,
+        embeds_scaling: "V only",
+        model: [
+          "206",
+          0
+        ],
+        ipadapter: [
+          "410",
+          0
+        ],
+        image: [
+          "280",
+          0
+        ],
+        clip_vision: [
+          "281",
+          0
+        ]
+      },
+      class_type: "IPAdapterAdvanced",
+      _meta: {
+        "title": "IPAdapter Advanced"
+      }
+    };
+
+    // attempt pass the path of the uploaded image to the load image (420)
+    if (modifiedWorkflow["420"]) {
+      modifiedWorkflow["420"].inputs.image = downloadedFiles.ipas[0];
+    }
+  }
+
+  if (workflow.refinement.enabled && workflow.ipas && workflow.ipas[1].enabled) {
+    modifiedWorkflow["412"] = {
+      inputs: {
+        weight: workflow.ipas[1].weight || 1,
+        weight_type: workflow.ipas[1].weightType || "strong style transfer",
+        combine_embeds: "average",
+        start_at: workflow.ipas[1].startingStep || 0,
+        end_at: workflow.ipas[1].endingStep || 1,
+        embeds_scaling: "V only",
+        model: [
+          "229",
+          0
+        ],
+        ipadapter: [
+          "410",
+          0
+        ],
+        image: [
+          "421",
+          0
+        ],
+        clip_vision: [
+          "281",
+          0
+        ]
+      },
+      class_type: "IPAdapterAdvanced",
+      _meta: {
+        "title": "IPAdapter Advanced"
+      }
+    };
+
+    // attempt pass the path of the uploaded image to the load image (421)
+    if (modifiedWorkflow["421"]) {
+      modifiedWorkflow["421"].inputs.image = downloadedFiles.ipas[1];
+    }
+  }
+
+  if (workflow.upscaler.enabled && workflow.ipas && workflow.ipas[2].enabled) {
+    modifiedWorkflow["413"] = {
+      inputs: {
+        weight: workflow.ipas[2].weight || 1,
+        weight_type: workflow.ipas[2].weightType || "style transfer",
+        combine_embeds: "average",
+        start_at: workflow.ipas[2].startingStep || 0,
+        end_at: workflow.ipas[2].endingStep || 1,
+        embeds_scaling: "V only",
+        ipadapter: [
+          "410",
+          0
+        ],
+        image: [
+          "280",
+          0
+        ],
+        clip_vision: [
+          "281",
+          0
+        ]
+      },
+      class_type: "IPAdapterAdvanced",
+      _meta: {
+        "title": "IPAdapter Advanced"
+      }
+    };
+
+    // attempt pass the path of the uploaded image to the load image (280)
+    if (modifiedWorkflow["280"]) {
+      modifiedWorkflow["280"].inputs.image = downloadedFiles.ipas[2];
+    }
+
+    if (workflow.refinement.enabled) {
+      modifiedWorkflow["413"].inputs.model = [
+        "443",
+        0
+      ];
+    } else {
+      modifiedWorkflow["413"].inputs.model = [
+        "229",
+        0
+      ];
     }
   }
 
@@ -466,7 +644,7 @@ function modifyWorkflow(
 
 export async function processComfy(
   downloadedFiles: {
-    ipas: string[];
+    ipas: (string | null)[];
     controlnet: string | null;
     upscaler: string | null;
   },

@@ -191,20 +191,45 @@ export async function startComfyWorker() {
 
       try {
         const downloadedFiles: {
-          ipas: string[];
+          ipas: (string | null)[];
           controlnet: string | null;
           upscaler: string | null;
         } = {
-          ipas: [],
+          ipas: [null, null, null],
           controlnet: null,
           upscaler: null
         };
         
         console.log('Controlnet in workflow:', job.data.workflow.controlnet);
         // Download ControlNet file
-        if (job.data.workflow.controlnet && job.data.workflow.controlnet.fileKey) {
+        if (job.data.workflow.controlnet && job.data.workflow.controlnet.enabled && job.data.workflow.controlnet.fileKey) {
+          console.log('CONTROLNET FILE KEY:', job.data.workflow.controlnet.fileKey);
           downloadedFiles.controlnet = await downloadFile(job.data.workflow.controlnet.fileKey, 'controlnet');
           console.log(`ControlNet file downloaded: ${downloadedFiles.controlnet}`);
+        }
+
+        console.log('Upscaler in workflow:', job.data.workflow.upscaler);
+        // Download ControlNet file
+        if (job.data.workflow.upscaler && job.data.workflow.upscaler.enabled && job.data.workflow.upscaler.fileKey) {
+          console.log('UPSCALER FILE KEY:', job.data.workflow.upscaler.fileKey);
+          downloadedFiles.upscaler = await downloadFile(job.data.workflow.upscaler.fileKey, 'upscaler');
+          console.log(`Upscaler file downloaded: ${downloadedFiles.upscaler}`);
+        }
+
+        // Download IPA files
+        if (job.data.workflow.ipas && Array.isArray(job.data.workflow.ipas)) {
+          for (let i = 0; i < job.data.workflow.ipas.length; i++) {
+            const ipa = job.data.workflow.ipas[i];
+            console.log(`IPA ${i + 1} in workflow:`, ipa);
+            
+            if (ipa?.enabled && ipa.fileKey) {
+              console.log(`IPA ${i + 1} FILE KEY:`, ipa.fileKey);
+              downloadedFiles.ipas[i] = await downloadFile(ipa.fileKey, `ipa${i + 1}`);
+              console.log(`IPA ${i + 1} file downloaded: ${downloadedFiles.ipas[i]}`);
+            } else {
+              console.log(`IPA ${i + 1} is not enabled or doesn't have a fileKey`);
+            }
+          }
         }
 
         console.log(`Download time: ${(Date.now() - downloadStart) / 1000} seconds`);
@@ -219,24 +244,16 @@ export async function startComfyWorker() {
         };
         
         try {
-          await processComfy(
-            downloadedFiles,
-            job.data.workflow
-          );
           const outputPaths = await processComfy(
             downloadedFiles,
             job.data.workflow
           );
-          // const outputPaths = [
-          //   "/workspace/comfy-worker-copy/src/img1.jpg",
-          //   "/workspace/comfy-worker-copy/src/img2.png",
-          // ]
+
           const outputKeys = ['12345', '6789']
           console.log(`ComfyUI processing completed, output paths:`, outputPaths);
 
           // Get the last 'batchSize' number of elements from outputPaths
           const batchSize = job.data.workflow.batchSize || job.data.output.length;
-          // const batchSize = 2;
           const lastOutputPaths = outputPaths.slice(-batchSize);
           
           if (!Array.isArray(job.data.output) || job.data.output.length !== lastOutputPaths.length) {
@@ -246,7 +263,6 @@ export async function startComfyWorker() {
           for (let i = 0; i < lastOutputPaths.length; i++) {
             const outputPath = lastOutputPaths[i];
             const outputKey = job.data.output[i];
-            // const outputKey = outputKeys[i];
           
             const maxRetries = 3;
             let retries = 0;

@@ -1,0 +1,697 @@
+{
+  "206": {
+    "inputs": {
+      "ckpt_name": "epicphotogasm_amateurreallife.safetensors",
+      "vae_name": "Baked VAE",
+      "clip_skip": -1,
+      "lora_name": "None",
+      "lora_model_strength": 1,
+      "lora_clip_strength": 1,
+      "positive": [
+        "222",
+        0
+      ],
+      "negative": "people in background, clothed, portrait, face, earings, body rolls, , holding phone, phone, phones, bokeh, (background blur:1.4), bokeh, (reflective skin:1.3), (glowing skin:1.5), nose piercing, (NSFW:1.5), (smooth skin:1.6), (disfigured iris:1.2), (bad eyes:1.4), phone, (holding phone:1.4),  cartoon, (3d:1.4), (disfigured), (bad art), (deformed), (poorly drawn), (extra limbs), (close up), strange colours, blurry, boring, sketch, lackluster, face portrait, signature, letters, watermark, grayscale\n",
+      "token_normalization": "none",
+      "weight_interpretation": "comfy",
+      "empty_latent_width": [
+        "390",
+        0
+      ],
+      "empty_latent_height": [
+        "391",
+        0
+      ],
+      "batch_size": 4,
+      "lora_stack": [
+        "207",
+        0
+      ],
+      "cnet_stack": [
+        "436",
+        0
+      ]
+    },
+    "class_type": "Efficient Loader",
+    "_meta": {
+      "title": "Efficient Loader"
+    }
+  },
+  "207": {
+    "inputs": {
+      "input_mode": "simple",
+      "lora_count": 5,
+      "lora_name_1": "epiNoiseoffset_v2.pt",
+      "lora_wt_1": 0.5,
+      "model_str_1": 1,
+      "clip_str_1": 1,
+      "lora_name_2": "clothing_slider_v19_000000030.safetensors",
+      "lora_wt_2": 1.2,
+      "model_str_2": 1,
+      "clip_str_2": 1,
+      "lora_name_3": "detail_slider_v4.safetensors",
+      "lora_wt_3": 2,
+      "model_str_3": 1,
+      "clip_str_3": 1,
+      "lora_name_4": "exposure_control_v10.safetensors",
+      "lora_wt_4": -0.35000000000000003,
+      "model_str_4": 1,
+      "clip_str_4": 1,
+      "lora_name_5": "amateurMadness-05.safetensors",
+      "lora_wt_5": -0.35000000000000003,
+      "model_str_5": 1,
+      "clip_str_5": 1,
+      "lora_name_6": "add_detail.safetensors",
+      "lora_wt_6": 1.2,
+      "model_str_6": 1,
+      "clip_str_6": 1,
+      "lora_name_7": "None",
+      "lora_wt_7": 1,
+      "model_str_7": 1,
+      "clip_str_7": 1,
+      "lora_name_8": "None",
+      "lora_wt_8": 1,
+      "model_str_8": 1,
+      "clip_str_8": 1,
+      "lora_name_9": "None",
+      "lora_wt_9": 1,
+      "model_str_9": 1,
+      "clip_str_9": 1,
+      "lora_name_10": "None",
+      "lora_wt_10": 1,
+      "model_str_10": 1,
+      "clip_str_10": 1,
+      "lora_name_11": "None",
+      "lora_wt_11": 1,
+      "model_str_11": 1,
+      "clip_str_11": 1,
+      "lora_name_12": "None",
+      "lora_wt_12": 1,
+      "model_str_12": 1,
+      "clip_str_12": 1,
+      "lora_name_13": "None",
+      "lora_wt_13": 1,
+      "model_str_13": 1,
+      "clip_str_13": 1,
+      "lora_name_14": "None",
+      "lora_wt_14": 1,
+      "model_str_14": 1,
+      "clip_str_14": 1,
+      "lora_name_15": "None",
+      "lora_wt_15": 1,
+      "model_str_15": 1,
+      "clip_str_15": 1,
+      "lora_name_16": "None",
+      "lora_wt_16": 1,
+      "model_str_16": 1,
+      "clip_str_16": 1,
+      "lora_name_17": "None",
+      "lora_wt_17": 1,
+      "model_str_17": 1,
+      "clip_str_17": 1,
+      "lora_name_18": "None",
+      "lora_wt_18": 1,
+      "model_str_18": 1,
+      "clip_str_18": 1,
+      "lora_name_19": "None",
+      "lora_wt_19": 1,
+      "model_str_19": 1,
+      "clip_str_19": 1,
+      "lora_name_20": "None",
+      "lora_wt_20": 1,
+      "model_str_20": 1,
+      "clip_str_20": 1,
+      "lora_name_21": "None",
+      "lora_wt_21": 1,
+      "model_str_21": 1,
+      "clip_str_21": 1,
+      "lora_name_22": "None",
+      "lora_wt_22": 1,
+      "model_str_22": 1,
+      "clip_str_22": 1,
+      "lora_name_23": "None",
+      "lora_wt_23": 1,
+      "model_str_23": 1,
+      "clip_str_23": 1,
+      "lora_name_24": "None",
+      "lora_wt_24": 1,
+      "model_str_24": 1,
+      "clip_str_24": 1,
+      "lora_name_25": "None",
+      "lora_wt_25": 1,
+      "model_str_25": 1,
+      "clip_str_25": 1,
+      "lora_name_26": "None",
+      "lora_wt_26": 1,
+      "model_str_26": 1,
+      "clip_str_26": 1,
+      "lora_name_27": "None",
+      "lora_wt_27": 1,
+      "model_str_27": 1,
+      "clip_str_27": 1,
+      "lora_name_28": "None",
+      "lora_wt_28": 1,
+      "model_str_28": 1,
+      "clip_str_28": 1,
+      "lora_name_29": "None",
+      "lora_wt_29": 1,
+      "model_str_29": 1,
+      "clip_str_29": 1,
+      "lora_name_30": "None",
+      "lora_wt_30": 1,
+      "model_str_30": 1,
+      "clip_str_30": 1,
+      "lora_name_31": "None",
+      "lora_wt_31": 1,
+      "model_str_31": 1,
+      "clip_str_31": 1,
+      "lora_name_32": "None",
+      "lora_wt_32": 1,
+      "model_str_32": 1,
+      "clip_str_32": 1,
+      "lora_name_33": "None",
+      "lora_wt_33": 1,
+      "model_str_33": 1,
+      "clip_str_33": 1,
+      "lora_name_34": "None",
+      "lora_wt_34": 1,
+      "model_str_34": 1,
+      "clip_str_34": 1,
+      "lora_name_35": "None",
+      "lora_wt_35": 1,
+      "model_str_35": 1,
+      "clip_str_35": 1,
+      "lora_name_36": "None",
+      "lora_wt_36": 1,
+      "model_str_36": 1,
+      "clip_str_36": 1,
+      "lora_name_37": "None",
+      "lora_wt_37": 1,
+      "model_str_37": 1,
+      "clip_str_37": 1,
+      "lora_name_38": "None",
+      "lora_wt_38": 1,
+      "model_str_38": 1,
+      "clip_str_38": 1,
+      "lora_name_39": "None",
+      "lora_wt_39": 1,
+      "model_str_39": 1,
+      "clip_str_39": 1,
+      "lora_name_40": "None",
+      "lora_wt_40": 1,
+      "model_str_40": 1,
+      "clip_str_40": 1,
+      "lora_name_41": "None",
+      "lora_wt_41": 1,
+      "model_str_41": 1,
+      "clip_str_41": 1,
+      "lora_name_42": "None",
+      "lora_wt_42": 1,
+      "model_str_42": 1,
+      "clip_str_42": 1,
+      "lora_name_43": "None",
+      "lora_wt_43": 1,
+      "model_str_43": 1,
+      "clip_str_43": 1,
+      "lora_name_44": "None",
+      "lora_wt_44": 1,
+      "model_str_44": 1,
+      "clip_str_44": 1,
+      "lora_name_45": "None",
+      "lora_wt_45": 1,
+      "model_str_45": 1,
+      "clip_str_45": 1,
+      "lora_name_46": "None",
+      "lora_wt_46": 1,
+      "model_str_46": 1,
+      "clip_str_46": 1,
+      "lora_name_47": "None",
+      "lora_wt_47": 1,
+      "model_str_47": 1,
+      "clip_str_47": 1,
+      "lora_name_48": "None",
+      "lora_wt_48": 1,
+      "model_str_48": 1,
+      "clip_str_48": 1,
+      "lora_name_49": "None",
+      "lora_wt_49": 1,
+      "model_str_49": 1,
+      "clip_str_49": 1
+    },
+    "class_type": "LoRA Stacker",
+    "_meta": {
+      "title": "LoRA Stacker"
+    }
+  },
+  "222": {
+    "inputs": {
+      "text": "(amateur:1.2), amateur candid selfie of 19 year old female, brown eyes, cute, big boobs, big cleavage, huge breasts, mixed race black, small nose, long, messy hair, neutral face, skin pores, wearing {black|blue|orange|white|green|purple} {blouse|t-shirt|dress|gym bra}, {indoors bedroom|messy living room|bathroom|messy bedroom|school classroom|hospital}",
+      "seed": 2012,
+      "autorefresh": "No"
+    },
+    "class_type": "DPRandomGenerator",
+    "_meta": {
+      "title": "Random Prompts"
+    }
+  },
+  "229": {
+    "inputs": {
+      "seed": 590464624596597,
+      "steps": 30,
+      "cfg": 5,
+      "sampler_name": "dpmpp_sde_gpu",
+      "scheduler": "normal",
+      "denoise": 1,
+      "preview_method": "auto",
+      "vae_decode": "true",
+      "model": [
+        "373",
+        0
+      ],
+      "positive": [
+        "206",
+        1
+      ],
+      "negative": [
+        "206",
+        2
+      ],
+      "latent_image": [
+        "206",
+        3
+      ],
+      "optional_vae": [
+        "206",
+        4
+      ]
+    },
+    "class_type": "KSampler (Efficient)",
+    "_meta": {
+      "title": "KSampler (Efficient)"
+    }
+  },
+  "246": {
+    "inputs": {
+      "seed": 587273246580578,
+      "steps": 30,
+      "cfg": 4,
+      "sampler_name": "dpmpp_sde_gpu",
+      "scheduler": "normal",
+      "denoise": 0.35000000000000003,
+      "preview_method": "auto",
+      "vae_decode": "true",
+      "positive": [
+        "229",
+        1
+      ],
+      "negative": [
+        "229",
+        2
+      ],
+      "latent_image": [
+        "229",
+        3
+      ],
+      "optional_vae": [
+        "229",
+        4
+      ]
+    },
+    "class_type": "KSampler (Efficient)",
+    "_meta": {
+      "title": "KSampler (Efficient)"
+    }
+  },
+  "251": {
+    "inputs": {
+      "ckpt_air": "{model_id}@{model_version}",
+      "ckpt_name": "edgeOfRealism_eorV20Fp16BakedVAE.safetensors",
+      "api_key": 4,
+      "download_chunks": null,
+      "download_path": "models\\checkpoints"
+    },
+    "class_type": "CivitAI_Checkpoint_Loader",
+    "_meta": {
+      "title": "CivitAI Checkpoint Loader"
+    }
+  },
+  "280": {
+    "inputs": {
+      "image": "ComfyUI_temp_hsnqk_00008_.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "281": {
+    "inputs": {
+      "clip_name": "model.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "Load CLIP Vision"
+    }
+  },
+  "284": {
+    "inputs": {
+      "control_net_name": "control_v11p_sd15_canny_fp16.safetensors"
+    },
+    "class_type": "ControlNetLoader",
+    "_meta": {
+      "title": "Load ControlNet Model"
+    }
+  },
+  "289": {
+    "inputs": {
+      "a": 6.28,
+      "bg_threshold": 0.1,
+      "resolution": 512,
+      "image": [
+        "375",
+        0
+      ]
+    },
+    "class_type": "MiDaS-DepthMapPreprocessor",
+    "_meta": {
+      "title": "MiDaS Depth Map"
+    }
+  },
+  "290": {
+    "inputs": {
+      "low_threshold": 0.2,
+      "high_threshold": 0.2,
+      "image": [
+        "375",
+        0
+      ]
+    },
+    "class_type": "Canny",
+    "_meta": {
+      "title": "Canny"
+    }
+  },
+  "294": {
+    "inputs": {
+      "detect_hand": "enable",
+      "detect_body": "enable",
+      "detect_face": "enable",
+      "resolution": 512,
+      "image": [
+        "375",
+        0
+      ]
+    },
+    "class_type": "OpenposePreprocessor",
+    "_meta": {
+      "title": "OpenPose Pose"
+    }
+  },
+  "295": {
+    "inputs": {
+      "detect_hand": "enable",
+      "detect_body": "enable",
+      "detect_face": "enable",
+      "resolution": 512,
+      "bbox_detector": "yolox_l.onnx",
+      "pose_estimator": "dw-ll_ucoco_384_bs5.torchscript.pt",
+      "image": [
+        "375",
+        0
+      ]
+    },
+    "class_type": "DWPreprocessor",
+    "_meta": {
+      "title": "DWPose Estimator"
+    }
+  },
+  "313": {
+    "inputs": {
+      "images": [
+        "314",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "314": {
+    "inputs": {
+      "upscale_by": 2,
+      "seed": 790104875125470,
+      "steps": 20,
+      "cfg": 8,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 0.15,
+      "mode_type": "Linear",
+      "tile_width": 512,
+      "tile_height": 512,
+      "mask_blur": 8,
+      "tile_padding": 32,
+      "seam_fix_mode": "None",
+      "seam_fix_denoise": 1,
+      "seam_fix_width": 64,
+      "seam_fix_mask_blur": 8,
+      "seam_fix_padding": 16,
+      "force_uniform_tiles": true,
+      "tiled_decode": false,
+      "image": [
+        "246",
+        5
+      ],
+      "positive": [
+        "246",
+        1
+      ],
+      "negative": [
+        "246",
+        2
+      ],
+      "vae": [
+        "246",
+        4
+      ],
+      "upscale_model": [
+        "318",
+        0
+      ]
+    },
+    "class_type": "UltimateSDUpscale",
+    "_meta": {
+      "title": "Ultimate SD Upscale"
+    }
+  },
+  "318": {
+    "inputs": {
+      "model_name": "RealESRGAN_x4.pth"
+    },
+    "class_type": "Upscale Model Loader",
+    "_meta": {
+      "title": "Upscale Model Loader"
+    }
+  },
+  "373": {
+    "inputs": {
+      "weight": 1,
+      "weight_type": "strong style transfer",
+      "combine_embeds": "average",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": [
+        "206",
+        0
+      ],
+      "ipadapter": [
+        "410",
+        0
+      ],
+      "image": [
+        "280",
+        0
+      ],
+      "image_negative": [
+        "420",
+        0
+      ],
+      "clip_vision": [
+        "281",
+        0
+      ]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  },
+  "374": {
+    "inputs": {},
+    "class_type": "DF_Get_image_size",
+    "_meta": {
+      "title": "Get image size"
+    }
+  },
+  "375": {
+    "inputs": {
+      "image": "image (35).jpeg",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "390": {
+    "inputs": {
+      "Number": "512"
+    },
+    "class_type": "Int",
+    "_meta": {
+      "title": "Int"
+    }
+  },
+  "391": {
+    "inputs": {
+      "Number": "768"
+    },
+    "class_type": "Int",
+    "_meta": {
+      "title": "Int"
+    }
+  },
+  "407": {
+    "inputs": {
+      "ckpt_air": "{model_id}@{model_version}",
+      "ckpt_name": "epicphotogasm_lastUnicorn.safetensors",
+      "api_key": "4",
+      "download_chunks": null,
+      "download_path": "models\\checkpoints"
+    },
+    "class_type": "CivitAI_Checkpoint_Loader",
+    "_meta": {
+      "title": "CivitAI Checkpoint Loader"
+    }
+  },
+  "410": {
+    "inputs": {
+      "ipadapter_file": "ip-adapter-plus-face_sd15.bin"
+    },
+    "class_type": "IPAdapterModelLoader",
+    "_meta": {
+      "title": "IPAdapter Model Loader"
+    }
+  },
+  "412": {
+    "inputs": {
+      "weight": 1,
+      "weight_type": "style transfer",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": [
+        "251",
+        0
+      ],
+      "ipadapter": [
+        "410",
+        0
+      ],
+      "image": [
+        "421",
+        0
+      ],
+      "clip_vision": [
+        "281",
+        0
+      ]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  },
+  "413": {
+    "inputs": {
+      "weight": 1,
+      "weight_type": "style transfer",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": [
+        "407",
+        0
+      ],
+      "ipadapter": [
+        "410",
+        0
+      ],
+      "image": [
+        "280",
+        0
+      ],
+      "clip_vision": [
+        "281",
+        0
+      ]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  },
+  "420": {
+    "inputs": {
+      "image": "ComfyUI_temp_hsnqk_00008_.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "421": {
+    "inputs": {
+      "image": "ComfyUI_temp_hsnqk_00008_.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "436": {
+    "inputs": {
+      "strength": 1,
+      "start_percent": 0,
+      "end_percent": 1
+    },
+    "class_type": "Control Net Stacker",
+    "_meta": {
+      "title": "Control Net Stacker"
+    }
+  },
+  "439": {
+    "inputs": {
+      "control_net_name": "control_v11p_sd15_openpose_fp16.safetensors"
+    },
+    "class_type": "ControlNetLoader",
+    "_meta": {
+      "title": "Load ControlNet Model"
+    }
+  },
+  "440": {
+    "inputs": {
+      "control_net_name": "control_v11f1p_sd15_depth_fp16.safetensors"
+    },
+    "class_type": "ControlNetLoader",
+    "_meta": {
+      "title": "Load ControlNet Model"
+    }
+  }
+}
