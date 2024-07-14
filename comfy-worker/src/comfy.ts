@@ -523,7 +523,7 @@ function modifyWorkflow(
           0
         ],
         image: [
-          "280",
+          "420",
           0
         ],
         clip_vision: [

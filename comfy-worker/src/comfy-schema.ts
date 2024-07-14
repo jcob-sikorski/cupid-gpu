@@ -165,9 +165,8 @@ const loraSchema = z.object({
 
 const ipaSchema = z.object({
   enabled: z.boolean(),
-  file: z.instanceof(File).optional(),
+  fileType: z.string().optional(),
   fileKey: z.string().optional(),
-  image: z.string().optional(),
   weight: z.number().min(-1).max(5).step(0.01),
   weightType: WeightTypeEnum,
   startingStep: z.number().min(0).max(1).step(0.001),
@@ -232,7 +231,7 @@ export const generateImageSchema = z.object({
   width: z.number().int().min(512).max(1024),
   batchSize: z.number().min(1).max(16).step(1),
   steps: z.number().min(1).max(50).step(1),
-  CFGScale: z.number().min(1).max(8).step(1),
+  CFGScale: z.number().min(1).max(8).step(0.5),
   sampler: SamplerEnum,
   scheduler: SchedulerEnum,
   denoise: z.number().min(0).max(1).step(0.01),
