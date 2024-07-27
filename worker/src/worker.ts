@@ -1,38 +1,38 @@
-// Import necessary functions and modules for file system operations, path handling, and process management.
 import { ensureDirSync, existsSync, rm, unlinkSync } from "fs-extra";
-import { Queue, Worker } from "bullmq"; // Import BullMQ for job queues.
-import { join, resolve } from "path"; // Import path functions to handle file and directory paths.
-// import { processRoop } from "./roop"; // Import the processRoop function for deepfake processing.
+import { Queue, Worker } from "bullmq";
+import { join, resolve } from "path";
+import FFmpegCommand from "fluent-ffmpeg";
+import { extension } from "mime-types";
+import * as Minio from "minio";
+import { Redis } from "ioredis";
+import { z } from "zod";
 import { processFacefusion } from "./facefusion";
-import FFmpegCommand from "fluent-ffmpeg"; // Import FFmpeg for media proce;ssing.
-import { extension } from "mime-types"; // Import mime-types to handle MIME types.
-import * as Minio from "minio"; // Import Minio for object storage operations.
-import { Redis } from "ioredis"; // Import ioredis for Redis operations.
-import { z } from "zod"; // Import Zod for schema validation.
 
 console.log("Starting deepfake worker script");
 
-// Define the temporary directory path for storing intermediate files.
 const TEMP_DIR = resolve("./temp/");
 console.log(`Temporary directory set to: ${TEMP_DIR}`);
 
-// Define the input type for deepfake job data.
 export type DeepfakeJobInput = {
   userId: string;
   millisLimit: number;
   lastPolledAt: number;
   maxIdleMillis: number;
-  source: string; // Source file path (image).
-  target: string; // Target file path (image/video).
-  output: string; // Output file path (image/video).
+  source: string;
+  target: string;
+  output: string;
 };
 
-// Define the output type for deepfake job results.
 export type DeepfakeJobOutput =
   | { success: false; error: string }
-  | { success: true };
+  | { success: true; outputs: string[] };
 
-// Create a Minio client to interact with the object storage service.
+type ProcessingPair = {
+  source: string;
+  target: string;
+  photo: boolean;
+};
+
 console.log("Creating Minio client");
 const minio = new Minio.Client({
   endPoint: process.env.MINIO_HOST!,
@@ -43,15 +43,12 @@ const minio = new Minio.Client({
 });
 console.log("Minio client created");
 
-// Define constants for the deepfake job queue and storage bucket names.
 const DEEPFAKE_QUEUE = "deepfake_worker";
 const DEEPFAKE_BUCKET = "deepfake";
 console.log(`Queue name: ${DEEPFAKE_QUEUE}, Bucket name: ${DEEPFAKE_BUCKET}`);
 
-// Function to start the deepfake processing worker.
 export async function startWorker() {
   console.log("Starting worker function");
-  // Check if the temporary directory exists, and remove it if it does, then recreate it.
   if (existsSync(TEMP_DIR)) {
     console.log(`Temporary directory ${TEMP_DIR} exists, removing it`);
     rm(TEMP_DIR, { recursive: true, force: true }, () => {
@@ -63,7 +60,6 @@ export async function startWorker() {
     ensureDirSync(TEMP_DIR);
   }
 
-  // Create a new job queue for deepfake processing jobs.
   console.log("Creating job queue");
   const queue = new Queue(DEEPFAKE_QUEUE, {
     connection: new Redis(process.env.REDIS_URL!, {
@@ -73,12 +69,10 @@ export async function startWorker() {
     }),
   });
 
-  // Clear the queue to remove any existing jobs.
   console.log("Draining existing jobs from the queue");
   await queue.drain(true);
   console.log("Queue drained");
 
-  // Create a new worker to process jobs from the deepfake queue.
   console.log("Creating worker");
   const worker = new Worker<DeepfakeJobInput, DeepfakeJobOutput>(
     DEEPFAKE_QUEUE,
@@ -86,7 +80,6 @@ export async function startWorker() {
       console.log(`Processing job ${job.id}`);
       console.log(`Job data:`, job.data);
 
-      // Check if the job has been idle for too long.
       const idleDiff = Date.now() - job.data.lastPolledAt;
       console.log(`Job idle time: ${idleDiff}ms`);
       if (idleDiff > job.data.maxIdleMillis) {
@@ -98,7 +91,6 @@ export async function startWorker() {
       const downloadStart = Date.now();
 
       try {
-        // Download the target file from the Minio storage.
         console.log(`Downloading target file: ${job.data.target}`);
         const targetStat = await minio.statObject(DEEPFAKE_BUCKET, job.data.target);
         console.log(`Target file stats:`, targetStat);
@@ -112,7 +104,6 @@ export async function startWorker() {
         
         let photo = true;
 
-        // If the target file is a video, check its duration.
         if (targetMime.startsWith("video/")) {
           console.log("Target is a video, checking duration");
           photo = false;
@@ -139,7 +130,6 @@ export async function startWorker() {
 
           console.log(`Video duration: ${probe.format.duration} seconds`);
 
-          // Check if the video duration exceeds the allowed limit.
           if (probe.format.duration * 1000 > job.data.millisLimit) {
             console.log(`Video duration exceeds limit of ${job.data.millisLimit}ms`);
             return {
@@ -151,7 +141,6 @@ export async function startWorker() {
           }
         }
 
-        // Download the source file from the Minio storage.
         console.log(`Downloading source file: ${job.data.source}`);
         const sourceStat = await minio.statObject(DEEPFAKE_BUCKET, job.data.source);
         console.log(`Source file stats:`, sourceStat);
@@ -161,80 +150,59 @@ export async function startWorker() {
         await minio.fGetObject(DEEPFAKE_BUCKET, job.data.source, sourcePath);
         console.log(`Source file downloaded`);
 
+        const processingPair: ProcessingPair = { source: sourcePath, target: targetPath, photo };
+
         console.log(`Download time: ${(Date.now() - downloadStart) / 1000} seconds`);
 
         console.log("Starting deepfake processing");
         const deepfakeStart = Date.now();
 
-        let result: DeepfakeJobOutput = {
-          success: false,
-          error: "Uninitialized response",
-        };
-
         try {
-          let lastProgressUpdate = 0;
+          const outputs = await processFacefusion([processingPair]);
+          console.log(`Deepfake processing completed, output paths:`, outputs);
 
-          // Process the deepfake using the processRoop function.
-          console.log(`Processing deepfake: source=${sourcePath}, target=${targetPath}, photo=${photo}`);
-          const outputPath = await processFacefusion(
-            sourcePath,
-            targetPath,
-            photo,
-            // async (processedFrames, totalFrames) => {
-            //   if (Date.now() - lastProgressUpdate < 1_000) return;
-            //   lastProgressUpdate = Date.now();
-
-            //   await job.updateProgress(Math.round(processedFrames / totalFrames * 100)); // prettier-ignore
-            // }
-          );
-          console.log(`Deepfake processing completed, output path: ${outputPath}`);
-
-          // Upload the processed output to the Minio storage.
           console.log(`Uploading output to Minio: ${job.data.output}`);
-          await minio.fPutObject(DEEPFAKE_BUCKET, job.data.output, outputPath);
+          await minio.fPutObject(DEEPFAKE_BUCKET, job.data.output, outputs[0]);
           console.log(`Output uploaded`);
-          unlinkSync(outputPath);
+          unlinkSync(outputs[0]);
           console.log(`Local output file deleted`);
-          result = { success: true };
+
+          console.log(`Cleaning up temporary files: ${sourcePath}, ${targetPath}`);
+          unlinkSync(sourcePath);
+          unlinkSync(targetPath);
+
+          console.log(`Removing source and target files from Minio`);
+          await Promise.allSettled([
+            minio.removeObject(DEEPFAKE_BUCKET, job.data.source),
+            minio.removeObject(DEEPFAKE_BUCKET, job.data.target),
+          ]);
+          console.log(`Minio cleanup completed`);
+
+          console.log(`Deepfake processing time: ${(Date.now() - deepfakeStart) / 1000} seconds`);
+
+          return { success: true, outputs: [job.data.output] };
         } catch (err) {
           console.error("Deepfake processing error:", err);
 
           if (String(err).includes("Deepfake processing timed out")) {
-            result = {
+            return {
               success: false,
               error: "Deepfake processing timed out",
             };
           } else {
-            result = {
+            return {
               success: false,
               error: "Processing failed, face might not be detected in one of your inputs",
             };
           }
         }
-
-        // Clean up the temporary files.
-        console.log(`Cleaning up temporary files: ${sourcePath}, ${targetPath}`);
-        unlinkSync(sourcePath);
-        unlinkSync(targetPath);
-
-        // Remove the source and target files from the Minio storage.
-        console.log(`Removing source and target files from Minio`);
-        await Promise.allSettled([
-          minio.removeObject(DEEPFAKE_BUCKET, job.data.source),
-          minio.removeObject(DEEPFAKE_BUCKET, job.data.target),
-        ]);
-        console.log(`Minio cleanup completed`);
-
-        console.log(`Deepfake processing time: ${(Date.now() - deepfakeStart) / 1000} seconds`);
-
-        return result;
       } catch (err) {
         console.error("Worker error:", err);
         return { success: false, error: "Unexpected worker error" };
       }
     },
     {
-      concurrency: 1, // Set the worker to process one job at a time.
+      concurrency: 1,
       connection: new Redis(process.env.REDIS_URL!, {
         db: parseInt(process.env.WORKER_DB!),
         maxRetriesPerRequest: null,
@@ -246,6 +214,5 @@ export async function startWorker() {
   console.log(`Worker started with ID: ${worker.id}`);
 }
 
-// Define a Zod schema for FFmpeg probe output validation.
 const ffprobeSchema = z.object({ format: z.object({ duration: z.number() }) });
 console.log("FFprobe schema defined");
